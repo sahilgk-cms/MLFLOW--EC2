@@ -33,6 +33,9 @@ docker-compose up ml-pipeline
 - **Artifacts:** http://{ec2-private-ip}:5000/#/experiments/{experiment_id}/runs/{run_id}/artifacts
  <img width="1422" height="624" alt="image" src="https://github.com/user-attachments/assets/8bc58556-70b1-405f-9861-412a171a116a" />
 
+- **Model Artifacts:** http://{ec2-private-ip}:5000/#/experiments/{experiment_id}/models/{model_id}/artifacts
+<img width="1357" height="785" alt="image" src="https://github.com/user-attachments/assets/d01e15a7-e204-4564-9ad2-da9671ff6b08" />
+
 ## Future improvements
 - Migrate artifact store to S3 (as artifacts cannot be accessed outside of EC2 instance)
 - Replace SQLite with PostgreSQL 
