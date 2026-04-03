@@ -23,6 +23,9 @@
 docker-compose up ml-pipeline
 ```
 
+## Screenshots
+- **Experiments:** http://{ec2-private-ip}:5000/#/experiments
+<img width="1452" height="393" alt="image" src="https://github.com/user-attachments/assets/1c593a8c-5820-4203-bd19-b145dabcfdf7" />
 
 
 ## Future improvements
