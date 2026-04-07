@@ -75,7 +75,8 @@ def main():
     experiment_name = f"{state}_{disease}"
     experiment = start_mlflow_experiment(mlflow_uri=MLFLOW_URI,
                                          experiment_name=experiment_name,
-                                         artifact_location="file:///mlflow/artifacts")
+                                         #artifact_location="file:///mlflow/artifacts"
+                                         )
     today_date = datetime.now().strftime("%Y/%m/%d")
 
 
