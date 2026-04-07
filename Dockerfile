@@ -1,6 +1,6 @@
 FROM python:3.11-slim
 
-WORKDIR /app
+WORKDIR /megh-pipeline
 
 # Install system deps (optional but useful for ML libs)
 RUN apt-get update && apt-get install -y \
@@ -17,10 +17,14 @@ COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen
 
 # Add venv to PATH
-ENV PATH="/app/.venv/bin:$PATH"
+ENV PATH="/megh-pipeline/.venv/bin:$PATH"
 
 # Copy rest of code
 COPY . .
+
+# Default command (can be overridden by docker-compose)
+CMD ["uv", "run",  "python", "main.py"]
+
 
 # Default command (can be overridden by docker-compose)
 CMD ["uv", "run",  "python", "main.py"]
