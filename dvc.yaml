@@ -1,6 +1,6 @@
 stages:
   megh_pipeline:
-    cmd: docker compose run megh-pipeline
+    cmd: DVC_STAGE=megh_pipeline docker compose run megh-pipeline
 
     deps:
       - main.py
