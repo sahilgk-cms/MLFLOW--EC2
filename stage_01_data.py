@@ -9,7 +9,7 @@ from db.engine import get_engine
 from utils.mlflow_helpers import start_mlflow_experiment, log_git_to_mlflow, log_dvc_info
 from utils.helpers import load_yaml_config
 from config.env import DB_HOST, DB_USER, DB_NAME, DB_PASSWORD, DB_PORT, MLFLOW_URI
-from config.filepaths import VILLAGE_EMBEDDINGS_PATH
+from config.filepaths import VILLAGE_EMBEDDINGS_PATH, FEATURES_ARTIFACT, DATA_ARTIFACT
 
 import argparse
 import os
@@ -44,12 +44,12 @@ def main():
         village_embeddings_path=VILLAGE_EMBEDDINGS_PATH
     )
 
-    df.to_parquet("artifacts/features.parquet")
+    df.to_parquet(FEATURES_ARTIFACT)
 
     #  Data
     output = build_data(df=df, data_config=DATA_CONFIG)
 
-    with open("artifacts/data.pkl", "wb") as f:
+    with open(DATA_ARTIFACT, "wb") as f:
         pickle.dump(output, f)
 
     #  MLflow root run
