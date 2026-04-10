@@ -53,7 +53,7 @@ def main():
     X_test = output["features"]["X_test"]
     y_test = output["features"]["y_test"]
 
-    # 🔹 preprocessing
+    # ?? preprocessing
     pre = PreprocessorFactory.create(ML_CONFIG.get("preprocessor_name"))
     pre.fit(X_train)
 
@@ -83,7 +83,7 @@ def main():
         tags_dict = { 
                 "preprocessor_name": ML_CONFIG.get("preprocessor_name")
                 }
-        mlflow.set_tags("pipeline_stage", "train_eval")
+        mlflow.set_tags({"pipeline_stage": "train_eval"})
 
         mlflow.set_tags(tags_dict)
 
