@@ -12,7 +12,7 @@ from search_space.search_space import get_search_space
 from utils.mlflow_helpers import start_mlflow_experiment, register_model_with_data_tags, initiate_client, log_git_to_mlflow, log_dvc_info
 from utils.explainability import log_shap_summary
 from utils.artifact_logger import log_parquet
-from utils.helpers import load_yaml_config
+from utils.helpers import load_yaml_config, safe_tag_value
 from utils.hardware import detect_gpu
 
 from config.env import MLFLOW_URI
@@ -33,6 +33,10 @@ DATABASE_CONFIG = load_yaml_config(args.database_config)
 FEATURE_CONFIG = load_yaml_config(args.feature_config)
 ML_CONFIG = load_yaml_config(args.ml_config)
 ML_CONFIG["use_gpu"] = detect_gpu()["available"]
+
+for key, ranges in FEATURE_CONFIG["bucket_defs"].items():
+    FEATURE_CONFIG["bucket_defs"][key] = [tuple(r) for r in ranges]
+
 
 def main():
 
@@ -79,6 +83,28 @@ def main():
     with mlflow.start_run(run_name = f"{experiment_name}_pipeline_root_{today_date}") as root_run:
         log_git_to_mlflow()
         log_dvc_info()
+
+        tags_dict = { 
+                "preprocessor_name": ML_CONFIG.get("preprocessor_name"),
+                "train_data_hash": output["hash"]["train_data_hash"],
+                "test_data_hash": output["hash"]["test_data_hash"],
+                "train_date_min": output["metadata"]["train_metadata"]["train_date_min"],
+                "train_date_max": output["metadata"]["train_metadata"]["train_date_max"],
+                "test_date_min": output["metadata"]["test_metadata"]["test_date_min"],
+                "test_date_max": output["metadata"]["test_metadata"]["test_date_max"]
+                }
+        
+        for key, value in FEATURE_CONFIG.items():
+            tags_dict[key] = safe_tag_value(value)
+
+        for key, value in DATA_CONFIG.items():
+            tags_dict[key] = safe_tag_value(value)
+
+        for key, value in DATABASE_CONFIG.items():
+            tags_dict[key] = safe_tag_value(value)
+
+        mlflow.set_tags(tags_dict)
+        
 
         log_parquet(df = output["data"]["train_df"], filename=TRAIN_PATH, artifact_path="data")
         log_parquet(df=output["data"]["test_df"], filename=TEST_PATH, artifact_path="data")
