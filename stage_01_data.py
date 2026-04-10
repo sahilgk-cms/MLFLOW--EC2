@@ -6,11 +6,11 @@ from datetime import datetime
 from pipelines.features_builder import build_features
 from pipelines.data_builder import build_data
 from db.engine import get_engine
-from utils.mlflow_helpers import start_mlflow_experiment, log_git_to_mlflow, log_dvc_info
-from utils.helpers import load_yaml_config
+from utils.mlflow_helpers import start_mlflow_experiment, log_git_to_mlflow, log_dvc_info, l
+from utils.helpers import load_yaml_config, safe_tag_value
 from config.env import DB_HOST, DB_USER, DB_NAME, DB_PASSWORD, DB_PORT, MLFLOW_URI
-from config.filepaths import VILLAGE_EMBEDDINGS_PATH, FEATURES_ARTIFACT, DATA_ARTIFACT
-
+from config.filepaths import VILLAGE_EMBEDDINGS_PATH, FEATURES_ARTIFACT, ARTIFACTS_FOLDER, DATA_ARTIFACT, RUN_ARTIFACT, TRAIN_PATH, TEST_PATH
+from utils.artifact_logger import log_parquet
 import argparse
 import os
 
@@ -26,7 +26,7 @@ DATABASE_CONFIG = load_yaml_config(args.database_config)
 FEATURE_CONFIG = load_yaml_config(args.feature_config)
 
 def main():
-    os.makedirs("artifacts", exist_ok=True)
+    os.makedirs(ARTIFACTS_FOLDER, exist_ok=True)
 
     engine = get_engine(
         db_user=DB_USER,
@@ -70,13 +70,36 @@ def main():
         log_dvc_info()
 
         # save run_id for next stage
-        with open("artifacts/run_id.txt", "w") as f:
+        with open(RUN_ARTIFACT, "w") as f:
             f.write(run_id)
 
         # log configs
         mlflow.log_artifact(args.data_config, artifact_path="config")
         mlflow.log_artifact(args.database_config, artifact_path="config")
         mlflow.log_artifact(args.feature_config, artifact_path="config")
+
+        tags_dict = { 
+                "train_data_hash": output["hash"]["train_data_hash"],
+                "test_data_hash": output["hash"]["test_data_hash"],
+                "train_date_min": output["metadata"]["train_metadata"]["train_date_min"],
+                "train_date_max": output["metadata"]["train_metadata"]["train_date_max"],
+                "test_date_min": output["metadata"]["test_metadata"]["test_date_min"],
+                "test_date_max": output["metadata"]["test_metadata"]["test_date_max"]
+                }
+        
+        for key, value in FEATURE_CONFIG.items():
+            tags_dict[key] = safe_tag_value(value)
+
+        for key, value in DATA_CONFIG.items():
+            tags_dict[key] = safe_tag_value(value)
+
+        for key, value in DATABASE_CONFIG.items():
+            tags_dict[key] = safe_tag_value(value)
+
+        mlflow.set_tags(tags_dict)
+
+        log_parquet(df = output["data"]["train_df"], filename=TRAIN_PATH, artifact_path="data")
+        log_parquet(df=output["data"]["test_df"], filename=TEST_PATH, artifact_path="data")
 
 if __name__ == "__main__":
     main()
