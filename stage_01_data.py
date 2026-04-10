@@ -6,7 +6,7 @@ from datetime import datetime
 from pipelines.features_builder import build_features
 from pipelines.data_builder import build_data
 from db.engine import get_engine
-from utils.mlflow_helpers import start_mlflow_experiment, log_git_to_mlflow, log_dvc_info, l
+from utils.mlflow_helpers import start_mlflow_experiment, log_git_to_mlflow, log_dvc_info
 from utils.helpers import load_yaml_config, safe_tag_value
 from config.env import DB_HOST, DB_USER, DB_NAME, DB_PASSWORD, DB_PORT, MLFLOW_URI
 from config.filepaths import VILLAGE_EMBEDDINGS_PATH, FEATURES_ARTIFACT, ARTIFACTS_FOLDER, DATA_ARTIFACT, RUN_ARTIFACT, TRAIN_PATH, TEST_PATH
