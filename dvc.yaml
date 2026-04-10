@@ -1,18 +1,29 @@
 stages:
-  megh_pipeline:
-    cmd: DVC_STAGE=megh_pipeline docker compose run megh-pipeline
-
-    deps:
-      - main.py
-      - pipelines/
-      - features/
-      - db/
-      - preprocessing/
-      - training/
-      - optimizer/
-      - utils/
-      - config/
-
+  data:
+    cmd: python stage_01_data.py \
+      --data_config config/data.yaml \
+      --database_config config/db.yaml \
+      --feature_config config/feature.yaml
     outs:
-      - train_dataset.parquet
-      - test_dataset.parquet
+      - artifacts/features.parquet
+      - artifacts/data.pkl
+      - artifacts/run_id.txt
+    deps:
+    - config/data.yaml
+    - config/db.yaml
+    - config/feature.yaml
+
+  train_eval:
+    cmd: python stage_02_train_eval.py \
+      --ml_config config/ml.yaml \
+      --search_space config/search.yaml \
+      --data_config configs/data.yaml \
+      --database_config configs/db.yaml \
+      --feature_config configs/feature.yaml
+    deps:
+      - artifacts/data.pkl
+      - artifacts/run_id.txt
+      - config/data.yaml
+      - config/db.yaml
+      - config/feature.yaml
+      - config/ml.yaml
