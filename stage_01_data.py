@@ -25,6 +25,9 @@ DATA_CONFIG = load_yaml_config(args.data_config)
 DATABASE_CONFIG = load_yaml_config(args.database_config)
 FEATURE_CONFIG = load_yaml_config(args.feature_config)
 
+for key, ranges in FEATURE_CONFIG["bucket_defs"].items():
+    FEATURE_CONFIG["bucket_defs"][key] = [tuple(r) for r in ranges]
+
 def main():
     os.makedirs(ARTIFACTS_FOLDER, exist_ok=True)
 
@@ -98,7 +101,7 @@ def main():
 
         mlflow.set_tags(tags_dict)
         mlflow.set_tags("pipeline_stage", "data")
-        
+
         log_parquet(df = output["data"]["train_df"], filename=TRAIN_PATH, artifact_path="data")
         log_parquet(df=output["data"]["test_df"], filename=TEST_PATH, artifact_path="data")
 
