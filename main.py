@@ -44,7 +44,6 @@ logger = get_logger(__name__)
 
 def main():
    
-
     engine = get_engine(db_user=DB_USER, db_password=DB_PASSWORD, db_host=DB_HOST,
                         db_port=DB_PORT, db_name=DB_NAME)
     
@@ -75,7 +74,6 @@ def main():
     experiment_name = f"{state}_{disease}"
     experiment = start_mlflow_experiment(mlflow_uri=MLFLOW_URI,
                                          experiment_name=experiment_name,
-                                         #artifact_location="file:///mlflow/artifacts"
                                          )
     today_date = datetime.now().strftime("%Y/%m/%d")
 
