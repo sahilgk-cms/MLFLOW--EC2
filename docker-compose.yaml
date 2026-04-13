@@ -12,4 +12,6 @@ services:
     working_dir: /megh-pipeline
     env_file:
       - .env
+    environment:
+      - DVC_ROOT=/megh-pipeline
     command: uv run dvc repro
