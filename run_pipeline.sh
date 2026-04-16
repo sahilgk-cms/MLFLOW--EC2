@@ -46,6 +46,6 @@ export DVC_ROOT=$(pwd)
 
 # Step 4: Run pipeline
 echo " Running DVC pipeline..."
-uv run dvc repro
+python -m uv run dvc repro
 
 echo "Pipeline completed successfully!"
