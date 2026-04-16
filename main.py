@@ -43,11 +43,10 @@ for key, ranges in FEATURE_CONFIG["bucket_defs"].items():
 logger = get_logger(__name__)
 
 def main():
-    logger.info("CWD during DVC:", os.getcwd())
-    logger.info("FILE:", __file__)
-    logger.info("TRACKING URI before setting:", mlflow.get_tracking_uri())
-    logger.info("ENV URI:", os.getenv("MLFLOW_URI"))
-   
+    os.environ["MLFLOW_ARTIFACT_ROOT"] = os.path.join(os.getcwd(), "mlruns")
+    mlflow.set_tracking_uri(MLFLOW_URI)
+    logger.info(f"TRACKING URI {mlflow.get_tracking_uri()}")
+    
     engine = get_engine(db_user=DB_USER, db_password=DB_PASSWORD, db_host=DB_HOST,
                         db_port=DB_PORT, db_name=DB_NAME)
     
@@ -87,8 +86,7 @@ def main():
 
   
 
-    mlflow.set_tracking_uri(MLFLOW_URI)
-    logger.info("TRACKING URI after setting:", mlflow.get_tracking_uri())
+    
     client = initiate_client(MLFLOW_URI)
 
     safe_end_run()
