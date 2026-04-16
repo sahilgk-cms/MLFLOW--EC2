@@ -43,6 +43,8 @@ for key, ranges in FEATURE_CONFIG["bucket_defs"].items():
 logger = get_logger(__name__)
 
 def main():
+    print("CWD during DVC:", os.getcwd())
+    print("FILE:", __file__)
    
     engine = get_engine(db_user=DB_USER, db_password=DB_PASSWORD, db_host=DB_HOST,
                         db_port=DB_PORT, db_name=DB_NAME)
