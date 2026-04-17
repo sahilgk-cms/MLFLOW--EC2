@@ -53,8 +53,7 @@ def main():
     logger.info("Building features..")
     statewise_final = build_features(engine=engine, database_config=DATABASE_CONFIG,
                                     feature_config=FEATURE_CONFIG, village_embeddings_path=VILLAGE_EMBEDDINGS_PATH)
-    log_parquet(df=statewise_final, filename=FEATURES_ARTIFACT,
-                         artifact_path="features")
+    
 
     logger.info("Building data...")
     output = build_data(df=statewise_final, data_config=DATA_CONFIG)
@@ -84,8 +83,6 @@ def main():
                                          )
     today_date = datetime.now().strftime("%Y/%m/%d")
 
-  
-
     
     client = initiate_client(MLFLOW_URI)
 
@@ -93,6 +90,9 @@ def main():
     with mlflow.start_run(run_name = f"{experiment_name}_pipeline_root_{today_date}") as pipeline_root:
         log_git_to_mlflow()
         log_dvc_info()
+
+        log_parquet(df=statewise_final, filename=FEATURES_ARTIFACT,
+                         artifact_path="features")
        
         pipeline_root_run_id = pipeline_root.info.run_id
         tags_dict = { 
