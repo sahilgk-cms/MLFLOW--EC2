@@ -48,4 +48,8 @@ export DVC_ROOT=$(pwd)
 echo " Running DVC pipeline..."
 uv run dvc repro
 
+# Step 5: Pusing artifacts to S3
+echo " Pushing artifacts to S3..."
+uv run dvc push
+
 echo "Pipeline completed successfully!"
